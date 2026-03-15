@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lokesh Mudaliar — Architect & Precast Walls</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@200;300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ╔══════════════════════════════════════════╗
+   ║  TOKENS                                  ║
+   ╚══════════════════════════════════════════╝ */
+:root{
+  --ink:   #000000;
+  --ink-2: #0a0a0a;
+  --ink-3: #111111;
+  --ink-4: #1a1a1a;
+  --wht:   #ffffff;
+  --wht-2: #f0f0f0;
+  --wht-3: rgba(255,255,255,.65);
+  --wht-4: rgba(255,255,255,.35);
+  --wht-5: rgba(255,255,255,.12);
+  --grn:  #4a7c59;
+  --grn-l:#6aab79;
+  --grn-g:rgba(74,124,89,.15);
+  --grn-b:rgba(74,124,89,.06);
+  --mono:'Space Mono',monospace;
+  --disp:'Bebas Neue',sans-serif;
+  --body:'DM Sans',sans-serif;
+  --ease:cubic-bezier(.25,.46,.45,.94);
+  --snap:cubic-bezier(.16,1,.3,1);
+}
+
+/* ╔══════════════════════════════════════════╗
+   ║  RESET                                   ║
+   ╚══════════════════════════════════════════╝ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);font-weight:300;
+  background:var(--ink);color:var(--wht);
+  overflow-x:hidden;cursor:none;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+::selection{background:var(--grn);color:#fff}
+
+/* ╔══════════════════════════════════════════╗
+   ║  CURSOR                                  ║
+   ╚══════════════════════════════════════════╝ */
+#c1,#c2{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+#c1{width:6px;height:6px;background:var(--wht);transition:.08s;top:0;left:0}
+#c2{width:28px;height:28px;border:1px solid rgba(255,255,255,.3);background:transparent;top:0;left:0;transition:width .3s,height .3s,border-color .3s}
+body.h #c1{width:10px;height:10px;background:var(--grn)}
+body.h #c2{width:44px;height:44px;border-color:rgba(74,124,89,.6)}
+
+/* ╔══════════════════════════════════════════╗
+   ║  NAV                                     ║
+   ╚══════════════════════════════════════════╝ */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px 64px;
+  transition:padding .4s var(--ease),background .4s,border .4s;
+}
+#nav.on{
+  padding:14px 64px;
+  background:rgba(0,0,0,.9);
+  backdrop-filter:blur(40px) saturate(200%);
+  -webkit-backdrop-filter:blur(40px) saturate(200%);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nw{ /* wordmark */
+  display:flex;flex-direction:column;gap:2px;
+}
+.nw-name{
+  font-family:var(--disp);font-size:1.3rem;letter-spacing:.08em;
+  color:var(--wht);line-height:1;
+}
+.nw-tag{
+  font-family:var(--mono);font-size:.48rem;letter-spacing:.2em;
+  color:var(--grn);text-transform:uppercase;
+}
+.nl{display:flex;gap:36px;list-style:none}
+.nl a{
+  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--wht-4);font-weight:400;transition:color .2s;
+}
+.nl a:hover{color:var(--wht)}
+/* NAV CTA — transparent */
+.nav-cta{
+  background-color:transparent;
+  border:1px solid rgba(74,124,89,.5);
+  color:var(--grn);
+  padding:9px 22px;border-radius:4px;
+  font-family:var(--mono);font-size:.58rem;
+  letter-spacing:.14em;text-transform:uppercase;cursor:none;
+  transition:all .25s var(--ease);
+}
+.nav-cta:hover{background-color:var(--grn);color:#fff;border-color:var(--grn)}
+
+/* ╔══════════════════════════════════════════╗
+   ║  HERO                                    ║
+   ╚══════════════════════════════════════════╝ */
+#hero{
+  height:100vh;position:relative;
+  display:flex;flex-direction:column;
+  justify-content:flex-end;overflow:hidden;
+  background:var(--ink);
+}
+/* Background photo + blue tint overlay */
+.hbg{position:absolute;inset:0;z-index:0}
+.hbg-img{
+  position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1920&q=90&fit=crop') center/cover;
+  opacity:.28;
+  transition:opacity 2s ease;
+}
+.hbg-img.b{opacity:0;transition:opacity 2s ease}
+.hbg-grad{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,.6) 0%, rgba(0,0,0,.1) 40%, rgba(0,0,0,.9) 85%, #000 100%),
+    radial-gradient(ellipse at 60% 40%, rgba(74,124,89,.12) 0%, transparent 65%);
+}
+/* Animated grid lines */
+.hgrid{
+  position:absolute;inset:0;z-index:1;
+  background-image:
+    linear-gradient(rgba(74,124,89,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(74,124,89,.06) 1px,transparent 1px);
+  background-size:80px 80px;
+  animation:gridFade 6s ease-in-out infinite;
+}
+@keyframes gridFade{0%,100%{opacity:.4}50%{opacity:.9}}
+/* Blue scanning line */
+.scan-line{
+  position:absolute;left:0;right:0;height:1px;z-index:2;
+  background:linear-gradient(90deg,transparent,rgba(74,124,89,.6),transparent);
+  animation:scan 8s linear infinite;
+  top:0;
+}
+@keyframes scan{from{top:0}to{top:100%}}
+
+/* Giant display text */
+.hero-giant{
+  position:absolute;z-index:3;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:var(--disp);
+  font-size:clamp(7rem,20vw,22rem);
+  letter-spacing:-.01em;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.07);
+  white-space:nowrap;
+  user-select:none;pointer-events:none;
+  transition:transform .1s linear;
+}
+
+/* Hero content */
+.hero-body{
+  position:relative;z-index:10;
+  padding:0 64px 72px;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:flex-end;gap:40px;
+}
+.hero-left{}
+.h-eyebrow{
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--grn);
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+  opacity:0;transform:translateY(14px);
+  animation:up .7s var(--ease) .4s forwards;
+}
+.h-eline{width:28px;height:1px;background:var(--grn)}
+.hero-h1{
+  font-family:var(--disp);
+  font-size:clamp(4.5rem,10vw,11rem);
+  line-height:.9;letter-spacing:.01em;
+  color:var(--wht);
+  opacity:0;transform:translateY(30px);
+  animation:up 1s var(--snap) .6s forwards;
+}
+.hero-h1 .blue{color:var(--grn)}
+.hero-h1 .sm{
+  display:block;
+  font-family:var(--body);font-weight:200;
+  font-size:clamp(1rem,2vw,1.6rem);
+  letter-spacing:.1em;color:var(--wht-3);
+  margin-bottom:12px;text-transform:uppercase;
+}
+.hero-right{
+  display:flex;flex-direction:column;align-items:flex-end;gap:20px;
+  opacity:0;transform:translateY(20px);
+  animation:up .9s var(--ease) 1s forwards;
+}
+.hero-desc{
+  font-size:clamp(.88rem,1vw,1rem);
+  color:var(--wht-3);line-height:1.85;
+  font-weight:300;text-align:right;max-width:380px;
+}
+.hero-stats{
+  display:flex;gap:32px;
+}
+.hstat{text-align:center}
+.hstat-n{
+  font-family:var(--disp);font-size:2.4rem;color:var(--wht);line-height:1;letter-spacing:.02em;
+}
+.hstat-l{font-family:var(--mono);font-size:.5rem;letter-spacing:.16em;color:var(--grn);text-transform:uppercase;margin-top:3px}
+.hero-btns{
+  display:flex;gap:10px;
+  opacity:0;transform:translateY(14px);
+  animation:up .8s var(--ease) 1.2s forwards;
+}
+/* ALL BUTTONS — transparent base */
+.btn{
+  background-color:transparent;
+  border:1px solid rgba(255,255,255,.25);
+  color:var(--wht);
+  padding:13px 32px;border-radius:4px;
+  font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.14em;text-transform:uppercase;cursor:none;
+  transition:all .3s var(--ease);display:inline-block;
+}
+.btn:hover{border-color:var(--wht);background-color:rgba(255,255,255,.07);transform:translateY(-2px)}
+.btn.b{border-color:var(--grn);color:var(--grn)}
+.btn.b:hover{background-color:var(--grn);color:#fff;border-color:var(--grn)}
+.btn.wb{/* white bg on dark, still starts transparent logic-wise */
+  background-color:var(--wht);color:var(--ink);border-color:var(--wht);
+}
+.btn.wb:hover{background-color:var(--wht-2);transform:translateY(-2px)}
+/* light section buttons */
+.btn.lgt{border-color:rgba(0,0,0,.22);color:var(--ink)}
+.btn.lgt:hover{border-color:var(--ink);background-color:rgba(0,0,0,.05)}
+.btn.lgt-solid{background-color:var(--ink);border-color:var(--ink);color:#fff}
+.btn.lgt-solid:hover{background-color:#1a1a1a;transform:translateY(-2px)}
+.btn.lgt-b{border-color:var(--grn);color:var(--grn);background-color:transparent}
+.btn.lgt-b:hover{background-color:var(--grn);color:#fff}
+
+/* scroll pill */
+.scroll-pill{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  z-index:10;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;animation:up .7s var(--ease) 1.8s forwards;
+}
+.scroll-pill span{font-family:var(--mono);font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--wht-4)}
+.scroll-bar{width:1px;height:40px;background:linear-gradient(to bottom,var(--grn),transparent)}
+@keyframes up{to{opacity:1;transform:translateY(0)}}
+
+/* ╔══════════════════════════════════════════╗
+   ║  TICKER                                  ║
+   ╚══════════════════════════════════════════╝ */
+.ticker{
+  background:var(--grn);overflow:hidden;padding:14px 0;position:relative;z-index:5;
+}
+.ticker-t{
+  display:inline-flex;white-space:nowrap;
+  animation:tick 25s linear infinite;
+}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ti{
+  display:inline-flex;align-items:center;gap:24px;padding:0 24px;
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;
+  color:#fff;
+}
+.td{width:3px;height:3px;background:rgba(255,255,255,.4);border-radius:50%;flex-shrink:0}
+
+/* ╔══════════════════════════════════════════╗
+   ║  SECTION BASE                            ║
+   ╚══════════════════════════════════════════╝ */
+.s-dark {background:var(--ink);  color:var(--wht);  padding:140px 64px}
+.s-dark2{background:var(--ink-2);color:var(--wht);  padding:140px 64px}
+.s-dark3{background:var(--ink-3);color:var(--wht);  padding:140px 64px}
+.s-wht  {background:var(--wht);  color:var(--ink);  padding:140px 64px}
+.s-wht2 {background:var(--wht-2);color:var(--ink);  padding:140px 64px}
+.inn{max-width:1240px;margin:0 auto}
+
+/* Section typography — DARK */
+.lbl{
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--grn);
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+}
+.lbl::before{content:'';width:20px;height:1px;background:var(--grn);flex-shrink:0}
+.ttl{
+  font-family:var(--disp);
+  font-size:clamp(3.5rem,7vw,8rem);
+  line-height:.92;letter-spacing:.01em;
+  color:var(--wht);margin-bottom:20px;
+}
+.ttl em{color:var(--grn);font-style:normal}
+.bod{
+  font-size:1rem;line-height:1.9;
+  color:var(--wht-3);font-weight:300;max-width:560px;
+}
+/* Section typography — LIGHT */
+.lbl-l{
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--grn);
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+}
+.lbl-l::before{content:'';width:20px;height:1px;background:var(--grn);flex-shrink:0}
+.ttl-l{
+  font-family:var(--disp);
+  font-size:clamp(3.5rem,7vw,8rem);
+  line-height:.92;letter-spacing:.01em;
+  color:var(--ink);margin-bottom:20px;
+}
+.ttl-l em{color:var(--grn);font-style:normal}
+.bod-l{font-size:1rem;line-height:1.9;color:#444;font-weight:300;max-width:560px}
+
+/* ╔══════════════════════════════════════════╗
+   ║  PARALLAX FULL-SCREEN                    ║
+   ╚══════════════════════════════════════════╝ */
+.par{position:relative;height:100vh;display:flex;align-items:center;overflow:hidden}
+.par-bg{
+  position:absolute;inset:-18%;z-index:0;
+  background-size:cover;background-position:center;will-change:transform;
+}
+.par-mask{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(125deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.3) 100%);
+}
+/* Blue glow corner on parallax */
+.par-glow{
+  position:absolute;z-index:2;pointer-events:none;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,124,89,.18) 0%,transparent 70%);
+  bottom:-100px;right:-100px;
+}
+.par-cnt{position:relative;z-index:3;padding:0 64px;max-width:820px}
+.par-cnt.r{margin-left:auto;text-align:right}
+.par-cnt.r .lbl{flex-direction:row-reverse;justify-content:flex-end}
+
+/* ╔══════════════════════════════════════════╗
+   ║  ABOUT                                   ║
+   ╚══════════════════════════════════════════╝ */
+.about-g{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center}
+.about-imgs{position:relative;height:640px}
+.aimg{position:absolute;border-radius:8px;overflow:hidden;line-height:0}
+.aimg img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.aimg:hover img{transform:scale(1.05)}
+.aimg.a1{width:70%;height:400px;top:0;right:0}
+.aimg.a2{width:52%;height:280px;bottom:0;left:0;border:3px solid var(--ink-2)}
+/* Blue corner accent */
+.aimg.a1::before{
+  content:'';position:absolute;top:0;left:0;width:3px;height:60px;background:var(--grn);z-index:2;
+}
+.aimg.a1::after{
+  content:'';position:absolute;top:0;left:0;width:60px;height:3px;background:var(--grn);z-index:2;
+}
+.about-note{
+  margin-top:20px;padding:18px 20px;
+  border-left:2px solid var(--grn);
+  background:var(--grn-b);border-radius:0 6px 6px 0;
+}
+.about-note p{font-family:var(--mono);font-size:.62rem;color:var(--wht-3);line-height:1.8;letter-spacing:.04em}
+.about-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+/* Stats */
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;overflow:hidden;margin-top:52px;
+}
+.sbox{background:var(--ink);padding:28px 16px;text-align:center}
+.snum{font-family:var(--disp);font-size:2.8rem;color:var(--wht);line-height:1;letter-spacing:.02em}
+.slbl{font-family:var(--mono);font-size:.5rem;letter-spacing:.16em;color:var(--grn);text-transform:uppercase;margin-top:6px}
+
+/* ╔══════════════════════════════════════════╗
+   ║  GALLERY                                 ║
+   ╚══════════════════════════════════════════╝ */
+.gal-sec{background:var(--ink-2);padding:100px 0 0}
+.gal-hdr{padding:0 64px;max-width:1240px;margin:0 auto 52px}
+.gal-scr{
+  overflow-x:auto;padding:0 64px 90px;
+  scrollbar-width:thin;scrollbar-color:rgba(74,124,89,.3) transparent;
+  cursor:grab;
+}
+.gal-scr:active{cursor:grabbing}
+.gal-scr::-webkit-scrollbar{height:2px}
+.gal-scr::-webkit-scrollbar-thumb{background:var(--grn);border-radius:2px}
+.gal-trk{display:flex;gap:14px;width:max-content}
+.gc{
+  flex-shrink:0;border-radius:8px;overflow:hidden;position:relative;
+  transition:transform .5s var(--snap);
+}
+.gc:hover{transform:translateY(-12px) scale(1.015)}
+.gc.t{width:300px;height:460px}
+.gc.w{width:500px;height:340px}
+.gc.s{width:340px;height:340px}
+.gc img{width:100%;height:100%;object-fit:cover;filter:brightness(.75) contrast(1.1) saturate(.85)}
+/* Blue line on top of each card */
+.gc::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--grn),var(--grn-l));
+  z-index:3;transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.gc:hover::before{transform:scaleX(1)}
+.gc-info{
+  position:absolute;bottom:0;left:0;right:0;padding:22px;z-index:2;
+  background:linear-gradient(to top,rgba(0,0,0,.85),transparent);
+}
+/* Transparent gallery tag */
+.gtag{
+  display:inline-block;
+  background-color:transparent;
+  border:1px solid rgba(74,124,89,.6);
+  color:var(--grn);
+  font-family:var(--mono);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;
+  padding:4px 12px;border-radius:3px;margin-bottom:8px;
+}
+.gname{font-family:var(--disp);font-size:1.3rem;color:var(--wht);letter-spacing:.03em}
+.gal-tip{text-align:center;padding-bottom:18px;font-family:var(--mono);font-size:.52rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.18)}
+
+/* ╔══════════════════════════════════════════╗
+   ║  PRODUCTS                                ║
+   ╚══════════════════════════════════════════╝ */
+.prod-g{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:60px}
+.pc{
+  background:var(--ink-3);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;padding:40px 32px;
+  transition:all .4s var(--ease);position:relative;overflow:hidden;
+}
+.pc::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--grn),var(--grn-l));
+  transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease);
+}
+.pc:hover{transform:translateY(-6px);border-color:rgba(74,124,89,.2);box-shadow:0 24px 60px rgba(74,124,89,.08)}
+.pc:hover::after{transform:scaleX(1)}
+.pico{
+  width:48px;height:48px;border-radius:6px;
+  background:var(--grn-b);border:1px solid rgba(74,124,89,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;margin-bottom:24px;
+}
+.pnm{font-family:var(--disp);font-size:1.7rem;letter-spacing:.03em;color:var(--wht);margin-bottom:12px}
+.pdsc{font-size:.85rem;line-height:1.88;color:var(--wht-3);font-weight:300;margin-bottom:20px}
+.psp{border-top:1px solid rgba(255,255,255,.06);padding-top:16px}
+.pr{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;font-size:.7rem;border-bottom:1px solid rgba(255,255,255,.04)}
+.pk{color:rgba(255,255,255,.38);font-weight:300}
+.pv{font-family:var(--mono);color:var(--grn);font-size:.65rem;letter-spacing:.06em}
+
+/* ╔══════════════════════════════════════════╗
+   ║  QUOTE BAND                              ║
+   ╚══════════════════════════════════════════╝ */
+.qband{
+  position:relative;padding:130px 64px;text-align:center;overflow:hidden;
+  background:var(--ink);
+}
+.qband::before{
+  content:'';position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1920&q=80') center/cover;
+  opacity:.06;
+}
+/* Blue glow center */
+.qband::after{
+  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,124,89,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.q-in{position:relative;z-index:2;max-width:880px;margin:0 auto}
+.qm{
+  font-family:var(--disp);font-size:8rem;color:rgba(74,124,89,.2);
+  line-height:.3;display:block;margin-bottom:36px;letter-spacing:.01em;
+}
+.qt{
+  font-family:var(--disp);font-size:clamp(1.8rem,3.5vw,3.2rem);
+  letter-spacing:.02em;color:var(--wht);line-height:1.2;margin-bottom:28px;
+}
+.qa{font-family:var(--mono);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--grn)}
+.qline{width:32px;height:1px;background:var(--grn);margin:14px auto 0}
+
+/* ╔══════════════════════════════════════════╗
+   ║  CALCULATOR                              ║
+   ╚══════════════════════════════════════════╝ */
+.calc-g{display:grid;grid-template-columns:1fr 1.15fr;gap:90px;align-items:start}
+.calc-steps{display:flex;flex-direction:column;gap:0;margin-top:40px}
+.cstep{
+  display:flex;gap:20px;padding:20px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.cstep:first-child{padding-top:0}
+.csn{
+  font-family:var(--disp);font-size:2.4rem;color:rgba(0,102,255,.25);
+  line-height:1;flex-shrink:0;width:48px;
+}
+.cst h4{font-size:.88rem;font-weight:500;color:var(--wht);margin-bottom:4px}
+.cst p{font-size:.78rem;color:var(--wht-4);font-weight:300}
+/* Calc card */
+.ccard{
+  background:var(--ink-3);border-radius:12px;padding:48px;
+  border:1px solid rgba(255,255,255,.07);
+}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cful{grid-column:1/-1}
+.flbl{
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(255,255,255,.4);
+  margin-bottom:8px;display:block;
+}
+.fin,.fsel{
+  width:100%;background:var(--ink-4);
+  border:1px solid rgba(255,255,255,.1);
+  color:var(--wht);padding:13px 16px;border-radius:6px;
+  font-family:var(--body);font-size:.9rem;font-weight:300;outline:none;
+  transition:border-color .3s,box-shadow .3s;
+  appearance:none;-webkit-appearance:none;
+}
+.fin:focus,.fsel:focus{border-color:var(--grn);box-shadow:0 0 0 3px rgba(74,124,89,.15)}
+.fsel{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%230066ff' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  padding-right:38px;cursor:none;
+}
+.fsel option{background:#1a1a1a}
+/* Transparent calc btn */
+.cbtn{
+  width:100%;background-color:transparent;
+  border:1px solid var(--grn);color:var(--grn);
+  padding:15px;border-radius:6px;
+  font-family:var(--mono);font-size:.65rem;
+  letter-spacing:.16em;text-transform:uppercase;cursor:none;
+  transition:all .3s var(--ease);margin-top:6px;
+}
+.cbtn:hover{background-color:var(--grn);color:#fff;transform:translateY(-1px)}
+.cres{display:none;margin-top:22px;background:var(--grn-b);border:1px solid rgba(74,124,89,.2);border-radius:8px;padding:26px}
+.cres.on{display:block}
+.rrow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.rbox{text-align:center;padding:18px 10px;background:var(--ink-3);border-radius:6px;border:1px solid rgba(255,255,255,.06)}
+.rnum{font-family:var(--disp);font-size:2rem;color:var(--wht);letter-spacing:.02em}
+.rlbl{font-family:var(--mono);font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:var(--grn);margin-top:4px}
+.rnote{font-size:.82rem;color:var(--wht-3);line-height:1.8;text-align:center;margin-bottom:18px}
+.rnote strong{color:var(--wht);font-weight:500}
+
+/* ╔══════════════════════════════════════════╗
+   ║  LOCATION                                ║
+   ╚══════════════════════════════════════════╝ */
+.loc-g{display:grid;grid-template-columns:1.1fr 1fr;gap:80px;align-items:start}
+.loc-list{margin-top:44px}
+.li{display:flex;gap:18px;padding:22px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.lic{
+  width:40px;height:40px;flex-shrink:0;
+  background:var(--grn-b);border:1px solid rgba(74,124,89,.2);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.95rem;
+}
+.lit{font-family:var(--mono);font-size:.54rem;letter-spacing:.18em;text-transform:uppercase;color:var(--grn);margin-bottom:5px;display:block}
+.liv{font-size:.9rem;color:var(--wht-3);line-height:1.75;font-weight:300}
+.liv a{color:var(--grn);transition:color .2s}
+.liv a:hover{color:var(--grn-l)}
+.mwrap{border-radius:10px;overflow:hidden;height:370px;border:1px solid rgba(74,124,89,.15)}
+.mwrap iframe{width:100%;height:100%;border:none;filter:grayscale(20%) contrast(1.1) brightness(.9)}
+.mbtns{display:flex;gap:10px;margin-top:14px}
+/* Transparent map btn */
+.mbtn{
+  flex:1;text-align:center;display:block;
+  background-color:transparent;border:1px solid rgba(255,255,255,.12);
+  color:var(--wht-3);padding:12px;border-radius:6px;
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:none;transition:all .3s var(--ease);
+}
+.mbtn:hover{border-color:var(--grn);color:var(--grn)}
+
+/* ╔══════════════════════════════════════════╗
+   ║  CONTACT                                 ║
+   ╚══════════════════════════════════════════╝ */
+.ct-wrap{max-width:780px;margin:0 auto;text-align:center}
+.ct-wrap .bod{margin:0 auto 52px;text-align:center}
+.ctform{display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:left}
+.ctful{grid-column:1/-1}
+.ctta{
+  width:100%;height:120px;resize:none;
+  background:var(--ink-4);border:1px solid rgba(255,255,255,.1);
+  color:var(--wht);padding:13px 16px;border-radius:6px;
+  font-family:var(--body);font-size:.9rem;font-weight:300;outline:none;
+  transition:border-color .3s;
+}
+.ctta:focus{border-color:var(--grn)}
+/* Transparent contact submit */
+.ctsub{
+  grid-column:1/-1;display:block;margin:10px auto 0;width:fit-content;
+  background-color:transparent;border:1px solid var(--grn);
+  color:var(--grn);padding:15px 56px;border-radius:6px;
+  font-family:var(--mono);font-size:.65rem;
+  letter-spacing:.16em;text-transform:uppercase;cursor:none;
+  transition:all .35s var(--ease);
+}
+.ctsub:hover{background-color:var(--grn);color:#fff;transform:translateY(-2px)}
+.ctok{
+  display:none;grid-column:1/-1;
+  background:rgba(74,124,89,.08);border:1px solid rgba(74,124,89,.3);
+  padding:16px;border-radius:6px;
+  font-family:var(--mono);font-size:.64rem;color:var(--grn);
+  text-align:center;letter-spacing:.06em;
+}
+.ctok.on{display:block}
+.ctlinks{display:flex;justify-content:center;gap:12px;margin-top:48px;flex-wrap:wrap}
+/* Transparent connect link */
+.ctlnk{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:12px 26px;border-radius:6px;
+  background-color:transparent;border:1px solid rgba(255,255,255,.12);
+  color:var(--wht-3);
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  transition:all .3s var(--ease);
+}
+.ctlnk:hover{border-color:var(--grn);color:var(--grn);transform:translateY(-2px)}
+
+/* ╔══════════════════════════════════════════╗
+   ║  FOOTER                                  ║
+   ╚══════════════════════════════════════════╝ */
+footer{
+  background:var(--ink);
+  border-top:1px solid rgba(255,255,255,.07);
+  padding:70px 64px 44px;
+}
+.ftp{
+  max-width:1240px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding-bottom:50px;border-bottom:1px solid rgba(255,255,255,.07);
+}
+.fbrnd{font-family:var(--disp);font-size:1.6rem;letter-spacing:.06em;color:var(--wht)}
+.fsub{font-family:var(--mono);font-size:.5rem;letter-spacing:.24em;text-transform:uppercase;color:var(--grn);margin-top:5px}
+.fctct{margin-top:22px;font-family:var(--mono);font-size:.65rem;color:rgba(255,255,255,.28);line-height:2}
+.fctct a{color:var(--grn)}
+.fcols{display:flex;gap:64px}
+.fcol h4{font-family:var(--mono);font-size:.52rem;letter-spacing:.26em;text-transform:uppercase;color:var(--grn);margin-bottom:18px;font-weight:400}
+.fcol a{display:block;font-size:.78rem;color:rgba(255,255,255,.3);margin-bottom:12px;transition:color .2s;font-weight:300}
+.fcol a:hover{color:var(--wht)}
+.fbot{max-width:1240px;margin:0 auto;padding-top:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fcpy{font-family:var(--mono);font-size:.58rem;color:rgba(255,255,255,.2);letter-spacing:.06em}
+
+/* ╔══════════════════════════════════════════╗
+   ║  SCROLL REVEAL                           ║
+   ╚══════════════════════════════════════════╝ */
+.rv {opacity:0;transform:translateY(40px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rl {opacity:0;transform:translateX(-40px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rr {opacity:0;transform:translateX(40px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in,.rl.in,.rr.in{opacity:1;transform:translate(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+.d4{transition-delay:.4s}.d5{transition-delay:.5s}
+
+/* ╔══════════════════════════════════════════╗
+   ║  MOBILE                                  ║
+   ╚══════════════════════════════════════════╝ */
+@media(max-width:900px){
+  #nav{padding:16px 22px}#nav.on{padding:12px 22px}
+  .nl,.nav-cta{display:none}
+  .hero-body{grid-template-columns:1fr;padding:0 22px 56px;gap:24px}
+  .hero-right{align-items:flex-start}
+  .hero-desc{text-align:left}
+  .s-dark,.s-dark2,.s-dark3,.s-wht,.s-wht2{padding:90px 22px}
+  .about-g,.calc-g,.loc-g{grid-template-columns:1fr;gap:52px}
+  .prod-g{grid-template-columns:1fr;gap:12px}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .ctform{grid-template-columns:1fr}
+  .ctform .ctful{grid-column:1/-1}
+  .ftp{flex-direction:column;gap:36px}
+  .fcols{flex-direction:column;gap:24px}
+  .par{height:88vh}
+  .par-cnt,.par-cnt.r{padding:0 22px}
+  .gal-hdr,.gal-scr{padding-left:22px;padding-right:22px}
+  .qband{padding:90px 22px}
+  footer{padding:52px 22px 36px}
+  .mbtns{flex-direction:column}
+  .cgrid{grid-template-columns:1fr}
+  .rrow{grid-template-columns:1fr}
+  .ccard{padding:28px 18px}
+  .hero-giant{font-size:clamp(5rem,22vw,22rem)}
+}
+
+/* ╔══════════════════════════════════════════╗
+   ║  WALL BUILDER GAME                       ║
+   ╚══════════════════════════════════════════╝ */
+#game-sec{background:#050a05;padding:110px 64px;position:relative;overflow:hidden}
+#game-sec::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(74,124,89,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(74,124,89,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.game-wrap{max-width:1100px;margin:0 auto;position:relative;z-index:2}
+.game-hdr{margin-bottom:40px}
+.game-hdr .lbl{color:var(--grn)}
+.game-hdr .ttl em{color:var(--grn)}
+.game-body{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start}
+#gameCanvas{
+  display:block;border-radius:10px;
+  border:1px solid rgba(74,124,89,.3);
+  background:#0a0f0a;cursor:crosshair;
+  width:100%;max-width:780px;height:520px;
+}
+.game-panel{
+  background:#0d120d;border:1px solid rgba(74,124,89,.2);
+  border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:16px;
+}
+.gp-title{
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--grn);margin-bottom:4px;
+}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tool-btn{
+  background-color:transparent;
+  border:1px solid rgba(74,124,89,.3);
+  color:rgba(255,255,255,.5);
+  padding:10px 6px;border-radius:6px;text-align:center;cursor:pointer;
+  font-family:var(--mono);font-size:.52rem;letter-spacing:.1em;
+  text-transform:uppercase;transition:all .25s;line-height:1.4;
+}
+.tool-btn:hover{border-color:var(--grn);color:var(--grn)}
+.tool-btn.active{border-color:var(--grn);background:rgba(74,124,89,.15);color:var(--grn)}
+.tool-btn .t-icon{font-size:1.2rem;display:block;margin-bottom:4px}
+.stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.stat-key{font-family:var(--mono);font-size:.54rem;letter-spacing:.12em;color:rgba(255,255,255,.3);text-transform:uppercase}
+.stat-val{font-family:var(--disp);font-size:1.5rem;color:var(--wht);letter-spacing:.03em}
+.game-actions{display:flex;flex-direction:column;gap:8px}
+.ga-btn{
+  background-color:transparent;
+  border:1px solid rgba(74,124,89,.4);color:var(--grn);
+  padding:11px;border-radius:6px;cursor:pointer;
+  font-family:var(--mono);font-size:.58rem;
+  letter-spacing:.14em;text-transform:uppercase;
+  transition:all .25s;text-align:center;
+}
+.ga-btn:hover{background:var(--grn);color:#fff}
+.ga-btn.danger{border-color:rgba(200,60,60,.4);color:rgba(200,60,60,.7)}
+.ga-btn.danger:hover{background:rgba(200,60,60,.8);color:#fff}
+.game-hint{
+  font-family:var(--mono);font-size:.54rem;letter-spacing:.08em;
+  color:rgba(255,255,255,.2);line-height:1.7;text-align:center;margin-top:8px;
+}
+.score-pop{
+  position:absolute;pointer-events:none;z-index:20;
+  font-family:var(--disp);font-size:1.4rem;color:var(--grn);
+  letter-spacing:.06em;opacity:1;transition:none;
+}
+@media(max-width:900px){
+  #game-sec{padding:80px 22px}
+  .game-body{grid-template-columns:1fr}
+  #gameCanvas{height:360px}
+}
+
+</style>
+</head>
+<body>
+
+<div id="c1"></div>
+<div id="c2"></div>
+
+<!-- ██ NAV ██ -->
+<nav id="nav">
+  <div class="nw">
+    <div class="nw-name">Lokesh Mudaliar</div>
+    <div class="nw-tag">B.Arch · Architect & Precast</div>
+  </div>
+  <ul class="nl">
+    <li><a href="#about">About</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#calculator">Estimator</a></li>
+    <li><a href="#location">Location</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get Quote</button>
+</nav>
+
+<!-- ██ HERO ██ -->
+<section id="hero">
+  <div class="hbg">
+    <div class="hbg-img" id="hia"></div>
+    <div class="hbg-img b" id="hib"></div>
+    <div class="hbg-grad"></div>
+  </div>
+  <div class="hgrid"></div>
+  <div class="scan-line"></div>
+
+  <!-- Giant ghost text -->
+  <div class="hero-giant" id="hGiant">LOKESH</div>
+
+  <div class="hero-body">
+    <div class="hero-left">
+      <p class="h-eyebrow"><span class="h-eline"></span>Architect · B.Arch · Precast Manufacturer</p>
+      <h1 class="hero-h1">
+        <span class="sm">Lokesh Mudaliar · B.Arch</span>
+        PRECAST<br><span class="blue">WALLS</span><br>&amp; ARCH
+      </h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-desc">A qualified architect leading a precision precast manufacturing studio — building compound walls, cement tiles, and architectural concrete elements engineered to last generations.</p>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-n cnt" data-t="500">0</div><div class="hstat-l">Projects</div></div>
+        <div class="hstat"><div class="hstat-n cnt" data-t="15">0</div><div class="hstat-l">Years</div></div>
+        <div class="hstat"><div class="hstat-n cnt" data-t="1200">0</div><div class="hstat-l">Walls Built</div></div>
+      </div>
+      <div class="hero-btns">
+        <a href="#about"    class="btn wb">About Lokesh</a>
+        <a href="#products" class="btn b">Our Products</a>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-pill"><span>Scroll</span><div class="scroll-bar"></div></div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-t">
+    <span class="ti">B.Arch Architect<span class="td"></span></span>
+    <span class="ti">Compound Walls<span class="td"></span></span>
+    <span class="ti">Cement Tiles<span class="td"></span></span>
+    <span class="ti">RCC Pillars<span class="td"></span></span>
+    <span class="ti">Precast Slabs<span class="td"></span></span>
+    <span class="ti">Factory Direct<span class="td"></span></span>
+    <span class="ti">Paver Blocks<span class="td"></span></span>
+    <span class="ti">Quality Tested<span class="td"></span></span>
+    <span class="ti">B.Arch Architect<span class="td"></span></span>
+    <span class="ti">Compound Walls<span class="td"></span></span>
+    <span class="ti">Cement Tiles<span class="td"></span></span>
+    <span class="ti">RCC Pillars<span class="td"></span></span>
+    <span class="ti">Precast Slabs<span class="td"></span></span>
+    <span class="ti">Factory Direct<span class="td"></span></span>
+    <span class="ti">Paver Blocks<span class="td"></span></span>
+    <span class="ti">Quality Tested<span class="td"></span></span>
+  </div>
+</div>
+
+<!-- PARALLAX 1 -->
+<div class="par">
+  <div class="par-bg" id="pb1" style="background-image:url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=90&fit=crop')"></div>
+  <div class="par-mask"></div>
+  <div class="par-glow"></div>
+  <div class="par-cnt rv">
+    <span class="lbl">The Factory</span>
+    <h2 class="ttl">BUILT<br>PANEL<br><em>BY PANEL.</em></h2>
+    <p class="bod" style="margin-bottom:36px">Our manufacturing facility produces heavy-duty precast concrete under strict quality protocols — every unit cast, cured, and tested before delivery.</p>
+    <a href="#products" class="btn b">View Products</a>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="s-dark2">
+  <div class="inn">
+    <div class="about-g">
+      <div class="rl">
+        <span class="lbl">The Architect</span>
+        <h2 class="ttl">LOKESH<br>MUDALIAR<br><em>B.ARCH</em></h2>
+        <p class="bod">A qualified architect who brings formal design training to the world of precast concrete manufacturing. Every product — from boundary walls to cement tiles — is proportioned and finished with the precision of an architectural eye.</p>
+        <p class="bod" style="margin-top:14px">His firm, Lokesh Precast Walls, is not simply a factory — it is a design-led studio where structural integrity and architectural thinking produce something genuinely different.</p>
+        <div class="about-note">
+          <p>B.Arch (Bachelor of Architecture) · Precast Concrete Specialist · Architectural Design Consultation · Factory-Direct Manufacturing</p>
+        </div>
+        <div class="about-btns">
+          <a href="#contact" class="btn wb">Consult Lokesh</a>
+          <a href="#products" class="btn">View Products</a>
+        </div>
+        <div class="stats-row rv d1">
+          <div class="sbox"><div class="snum cnt2" data-t="500">0</div><div class="slbl">Projects</div></div>
+          <div class="sbox"><div class="snum cnt2" data-t="15">0</div><div class="slbl">Years Active</div></div>
+          <div class="sbox"><div class="snum cnt2" data-t="1200">0</div><div class="slbl">Walls Built</div></div>
+          <div class="sbox"><div class="snum cnt2" data-t="100">0</div><div class="slbl">% Tested</div></div>
+        </div>
+      </div>
+      <div class="rr">
+        <div class="about-imgs">
+          <div class="aimg a1">
+            <img src="https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?w=900&q=90&fit=crop" alt="Precast factory" loading="lazy">
+          </div>
+          <div class="aimg a2">
+            <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=700&q=90&fit=crop" alt="Architecture" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARALLAX 2 -->
+<div class="par">
+  <div class="par-bg" id="pb2" style="background-image:url('https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1920&q=90&fit=crop')"></div>
+  <div class="par-mask"></div>
+  <div class="par-glow" style="left:-100px;right:auto"></div>
+  <div class="par-cnt r rv">
+    <span class="lbl" style="justify-content:flex-end">Design Philosophy</span>
+    <h2 class="ttl" style="text-align:right">ARCHI-<br>TECTURE<br><em>FIRST.</em></h2>
+    <p class="bod" style="margin-bottom:36px;margin-left:auto;text-align:right">When an architect designs the product, the result is different — better proportioned, cleaner in detail, built to complement the structures it defines.</p>
+    <a href="#about" class="btn b">Our Approach</a>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div id="gallery" class="gal-sec">
+  <div class="gal-hdr rv">
+    <span class="lbl">Gallery</span>
+    <h2 class="ttl">FACTORY &amp;<br><em>COMPLETED WORKS</em></h2>
+    <p class="bod" style="max-width:500px">Scroll through our production floor, installation projects, and finished structures.</p>
+  </div>
+  <div class="gal-scr" id="gsc">
+    <div class="gal-trk">
+      <div class="gc t">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=90&fit=crop&crop=left" alt="Wall casting" loading="lazy">
+        <div class="gc-info"><span class="gtag">Production</span><div class="gname">Wall Casting</div></div>
+      </div>
+      <div class="gc w">
+        <img src="https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?w=1000&q=90&fit=crop" alt="Installation" loading="lazy">
+        <div class="gc-info"><span class="gtag">Installation</span><div class="gname">Site Work</div></div>
+      </div>
+      <div class="gc s">
+        <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=700&q=90&fit=crop" alt="Structure" loading="lazy">
+        <div class="gc-info"><span class="gtag">Structure</span><div class="gname">Boundary Wall</div></div>
+      </div>
+      <div class="gc t">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=700&q=90&fit=crop&crop=right" alt="Architecture" loading="lazy">
+        <div class="gc-info"><span class="gtag">Architecture</span><div class="gname">Design Planning</div></div>
+      </div>
+      <div class="gc w">
+        <img src="https://images.unsplash.com/photo-1565631166758-02609c59c10b?w=1000&q=90&fit=crop" alt="Completed" loading="lazy">
+        <div class="gc-info"><span class="gtag">Completed</span><div class="gname">Finished Structures</div></div>
+      </div>
+      <div class="gc s">
+        <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=700&q=90&fit=crop" alt="Detail" loading="lazy">
+        <div class="gc-info"><span class="gtag">Detail</span><div class="gname">Concrete Work</div></div>
+      </div>
+    </div>
+  </div>
+  <p class="gal-tip">← drag to scroll →</p>
+</div>
+
+<!-- PARALLAX 3 -->
+<div class="par">
+  <div class="par-bg" id="pb3" style="background-image:url('https://images.unsplash.com/photo-1565631166758-02609c59c10b?w=1920&q=90&fit=crop')"></div>
+  <div class="par-mask"></div>
+  <div class="par-glow"></div>
+  <div class="par-cnt rv">
+    <span class="lbl">Our Standard</span>
+    <h2 class="ttl">QUALITY<br>IN EVERY<br><em>UNIT.</em></h2>
+    <p class="bod" style="margin-bottom:36px">Fe500 TMT steel, M25/M30 concrete mix, rigorous curing — every product exceeds industry benchmarks before it leaves our facility.</p>
+    <a href="#calculator" class="btn b">Estimate My Project</a>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products" class="s-dark3">
+  <div class="inn">
+    <div class="rv" style="max-width:680px;margin-bottom:60px">
+      <span class="lbl">Products</span>
+      <h2 class="ttl">PRECAST<br><em>PRODUCT RANGE</em></h2>
+      <p class="bod">Factory-direct products engineered for durability, architectural finish, and long-term structural performance.</p>
+    </div>
+    <div class="prod-g">
+      <div class="pc rv d1">
+        <div class="pico">🧱</div>
+        <div class="pnm">Compound Walls</div>
+        <div class="pdsc">Heavy-duty RCC precast boundary walls with reinforced panels. Multiple heights and finishes for all project types.</div>
+        <div class="psp">
+          <div class="pr"><span class="pk">Heights</span><span class="pv">4 · 5 · 6 · 7 ft</span></div>
+          <div class="pr"><span class="pk">Panel Width</span><span class="pv">8 ft standard</span></div>
+          <div class="pr"><span class="pk">Grade</span><span class="pv">M25 / M30</span></div>
+          <div class="pr"><span class="pk">Thickness</span><span class="pv">75–100 mm</span></div>
+        </div>
+      </div>
+      <div class="pc rv d2">
+        <div class="pico">⬛</div>
+        <div class="pnm">Cement Tiles</div>
+        <div class="pdsc">Hydraulic-pressed cement tiles for flooring, pathways, and outdoor surfaces with multiple textures.</div>
+        <div class="psp">
+          <div class="pr"><span class="pk">Sizes</span><span class="pv">12×12 · 16×16 · 24×24</span></div>
+          <div class="pr"><span class="pk">Thickness</span><span class="pv">25–40 mm</span></div>
+          <div class="pr"><span class="pk">Finish</span><span class="pv">Rough · Smooth · Textured</span></div>
+          <div class="pr"><span class="pk">Load</span><span class="pv">Heavy Duty</span></div>
+        </div>
+      </div>
+      <div class="pc rv d3">
+        <div class="pico">🏛️</div>
+        <div class="pnm">RCC Pillars</div>
+        <div class="pdsc">Precision-cast reinforced pillars for wall support and gate structures with smooth factory finish.</div>
+        <div class="psp">
+          <div class="pr"><span class="pk">Heights</span><span class="pv">5 · 6 · 7 · 8 ft</span></div>
+          <div class="pr"><span class="pk">Section</span><span class="pv">6×6 · 9×9 inch</span></div>
+          <div class="pr"><span class="pk">Steel</span><span class="pv">Fe 500 TMT</span></div>
+          <div class="pr"><span class="pk">Surface</span><span class="pv">Smooth Finish</span></div>
+        </div>
+      </div>
+      <div class="pc rv d1">
+        <div class="pico">📐</div>
+        <div class="pnm">Precast Slabs</div>
+        <div class="pdsc">Solid and hollow-core slabs for rapid roof deck and compound construction. Factory-load-tested.</div>
+        <div class="psp">
+          <div class="pr"><span class="pk">Span</span><span class="pv">8–20 ft</span></div>
+          <div class="pr"><span class="pk">Thickness</span><span class="pv">100–200 mm</span></div>
+          <div class="pr"><span class="pk">Live Load</span><span class="pv">Up to 5 kN/m²</span></div>
+          <div class="pr"><span class="pk">Ready For</span><span class="pv">Direct Plaster</span></div>
+        </div>
+      </div>
+      <div class="pc rv d2">
+        <div class="pico">🔷</div>
+        <div class="pnm">Paver Blocks</div>
+        <div class="pdsc">Interlocking concrete pavers for driveways, walkways, and commercial flooring. Heavy vehicle rated.</div>
+        <div class="psp">
+          <div class="pr"><span class="pk">Shapes</span><span class="pv">Zigzag · Brick · Hex</span></div>
+          <div class="pr"><span class="pk">Thickness</span><span class="pv">60 · 80 mm</span></div>
+          <div class="pr"><span class="pk">Strength</span><span class="pv">≥35 N/mm²</span></div>
+          <div class="pr"><span class="pk">Colors</span><span class="pv">Natural · Red · Grey</span></div>
+        </div>
+      </div>
+      <div class="pc rv d3">
+        <div class="pico">🛡️</div>
+        <div class="pnm">Custom Precast</div>
+        <div class="pdsc">Bespoke elements designed by Lokesh Mudaliar B.Arch — ornamental panels, fence posts, architectural concrete.</div>
+        <div class="psp">
+          <div class="pr"><span class="pk">Designed By</span><span class="pv">Lokesh B.Arch</span></div>
+          <div class="pr"><span class="pk">Min. Order</span><span class="pv">50 units</span></div>
+          <div class="pr"><span class="pk">Lead Time</span><span class="pv">7–14 days</span></div>
+          <div class="pr"><span class="pk">Pricing</span><span class="pv">On Request</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- WALL BUILDER GAME -->
+<section id="game-sec" class="rv">
+  <div class="game-wrap">
+    <div class="game-hdr">
+      <span class="lbl">Interactive Demo</span>
+      <h2 class="ttl">BUILD YOUR<br><em>OWN COMPOUND</em></h2>
+      <p class="bod" style="max-width:600px;margin-bottom:0">Place precast wall panels, RCC pillars, and gates around your plot — just like Lokesh Precast does on real sites. Click to place, right-click to remove.</p>
+    </div>
+    <div class="game-body">
+      <div style="position:relative">
+        <canvas id="gameCanvas" width="780" height="520"></canvas>
+      </div>
+      <div class="game-panel">
+        <div>
+          <div class="gp-title">Select Tool</div>
+          <div class="tool-grid">
+            <button class="tool-btn active" id="tb-wall" onclick="setTool('wall')">
+              <span class="t-icon">🧱</span>Wall Panel
+            </button>
+            <button class="tool-btn" id="tb-pillar" onclick="setTool('pillar')">
+              <span class="t-icon">🏛️</span>RCC Pillar
+            </button>
+            <button class="tool-btn" id="tb-gate" onclick="setTool('gate')">
+              <span class="t-icon">🚪</span>Gate / Gap
+            </button>
+            <button class="tool-btn" id="tb-erase" onclick="setTool('erase')">
+              <span class="t-icon">❌</span>Remove
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="gp-title">Your Stats</div>
+          <div class="stat-row"><span class="stat-key">Panels</span><span class="stat-val" id="st-panels">0</span></div>
+          <div class="stat-row"><span class="stat-key">Pillars</span><span class="stat-val" id="st-pillars">0</span></div>
+          <div class="stat-row"><span class="stat-key">Gates</span><span class="stat-val" id="st-gates">0</span></div>
+          <div class="stat-row"><span class="stat-key">Coverage</span><span class="stat-val" id="st-pct">0%</span></div>
+        </div>
+        <div class="game-actions">
+          <button class="ga-btn" onclick="autoFill()">⚡ Auto-Fill Boundary</button>
+          <button class="ga-btn" onclick="clearAll()" style="border-color:rgba(200,60,60,.4);color:rgba(200,80,80,.8)">🗑 Clear All</button>
+          <button class="ga-btn" onclick="requestQuote()">📋 Get This Quote</button>
+        </div>
+        <p class="game-hint">Click to place · Right-click to remove · Drag to draw walls</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- QUOTE -->
+<div class="qband rv">
+  <div class="q-in">
+    <span class="qm">"</span>
+    <p class="qt">AN ARCHITECT DOESN'T JUST DESIGN BUILDINGS — HE DESIGNS THE BOUNDARIES THAT DEFINE THEM.</p>
+    <p class="qa">Lokesh Mudaliar · B.Arch · Founder, Lokesh Precast Walls</p>
+    <div class="qline"></div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<section id="calculator" class="s-dark2">
+  <div class="inn">
+    <div class="calc-g">
+      <div class="rl">
+        <span class="lbl">Smart Estimator</span>
+        <h2 class="ttl">CALCULATE<br><em>YOUR NEEDS</em></h2>
+        <p class="bod">Enter your plot dimensions for an instant estimate of panels, pillars, and total material quantities.</p>
+        <div class="calc-steps">
+          <div class="cstep rv d1">
+            <div class="csn">01</div>
+            <div class="cst"><h4>Enter plot dimensions</h4><p>Length and width in feet</p></div>
+          </div>
+          <div class="cstep rv d2">
+            <div class="csn">02</div>
+            <div class="cst"><h4>Select product &amp; height</h4><p>Choose your product type</p></div>
+          </div>
+          <div class="cstep rv d3">
+            <div class="csn">03</div>
+            <div class="cst"><h4>Instant estimate</h4><p>Panels, pillars, total area</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="rr">
+        <div class="ccard">
+          <div class="cgrid">
+            <div>
+              <label class="flbl">Plot Length (ft)</label>
+              <input type="number" class="fin" id="cL" placeholder="e.g. 60" min="1">
+            </div>
+            <div>
+              <label class="flbl">Plot Width (ft)</label>
+              <input type="number" class="fin" id="cW" placeholder="e.g. 40" min="1">
+            </div>
+            <div>
+              <label class="flbl">Wall Height</label>
+              <select class="fsel" id="cH">
+                <option value="4">4 feet</option>
+                <option value="5">5 feet</option>
+                <option value="6" selected>6 feet</option>
+                <option value="7">7 feet</option>
+              </select>
+            </div>
+            <div>
+              <label class="flbl">Product Type</label>
+              <select class="fsel" id="cP">
+                <option value="wall">Compound Walls</option>
+                <option value="tile">Cement Tiles (floor)</option>
+                <option value="paver">Paver Blocks</option>
+              </select>
+            </div>
+            <div>
+              <label class="flbl">Gates / Openings</label>
+              <input type="number" class="fin" id="cG" placeholder="0" min="0" value="0">
+            </div>
+            <div>
+              <label class="flbl">Gate Width Each (ft)</label>
+              <input type="number" class="fin" id="cGW" placeholder="10" min="0" value="10">
+            </div>
+            <div class="cful">
+              <button class="cbtn" onclick="doCalc()">Calculate Estimate →</button>
+            </div>
+            <div class="cres cful" id="cRes">
+              <div class="rrow">
+                <div class="rbox"><div class="rnum" id="rP">—</div><div class="rlbl">Perimeter</div></div>
+                <div class="rbox"><div class="rnum" id="rA">—</div><div class="rlbl">Area</div></div>
+                <div class="rbox"><div class="rnum" id="rU">—</div><div class="rlbl">Units</div></div>
+              </div>
+              <p class="rnote" id="rNote"></p>
+              <div style="text-align:center">
+                <a href="#contact" class="btn b" style="font-size:.62rem;padding:11px 26px">Request Full Quote →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section id="location" class="s-dark">
+  <div class="inn">
+    <div class="loc-g">
+      <div class="rl">
+        <span class="lbl">Find Us</span>
+        <h2 class="ttl">VISIT THE<br><em>FACTORY</em></h2>
+        <p class="bod">We welcome clients to visit our facility — see production firsthand and inspect quality before ordering.</p>
+        <div class="loc-list">
+          <div class="li">
+            <div class="lic">📍</div>
+            <div>
+              <span class="lit">Factory Address</span>
+              <div class="liv">Lokesh Precast Walls Factory<br><a href="https://maps.app.goo.gl/m9Zw2esxCN3CmjxKA" target="_blank">View on Google Maps →</a></div>
+            </div>
+          </div>
+          <div class="li">
+            <div class="lic">📞</div>
+            <div>
+              <span class="lit">Phone &amp; WhatsApp</span>
+              <div class="liv"><a href="tel:+917013485016">+91 70134 85016</a><br><a href="https://wa.me/917013485016" target="_blank">WhatsApp: 70134 85016</a></div>
+            </div>
+          </div>
+          <div class="li">
+            <div class="lic">🕐</div>
+            <div>
+              <span class="lit">Working Hours</span>
+              <div class="liv">Mon – Sat: 8:00 AM – 6:00 PM<br>Sunday: By Appointment</div>
+            </div>
+          </div>
+          <div class="li">
+            <div class="lic">✉️</div>
+            <div>
+              <span class="lit">Email</span>
+              <div class="liv"><a href="mailto:lokeshprecast@gmail.com">lokeshprecast@gmail.com</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rr">
+        <div class="mwrap">
+          <iframe src="https://maps.google.com/maps?q=17.2403,78.4294&z=15&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="mbtns">
+          <a href="https://maps.app.goo.gl/m9Zw2esxCN3CmjxKA" target="_blank" class="mbtn">Open in Google Maps</a>
+          <a href="https://wa.me/917013485016?text=Hi%2C%20send%20directions%20to%20factory" target="_blank" class="mbtn">WhatsApp Directions</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="s-dark3">
+  <div class="inn">
+    <div class="ct-wrap">
+      <div class="rv">
+        <span class="lbl" style="justify-content:center">Contact</span>
+        <h2 class="ttl" style="text-align:center">LET'S BUILD<br><em>TOGETHER</em></h2>
+        <p class="bod" style="margin:0 auto 52px;text-align:center">Tell us your project requirements — Lokesh Mudaliar's team will respond within 24 hours.</p>
+      </div>
+      <div class="ctform rv d1">
+        <div>
+          <label class="flbl">Your Name *</label>
+          <input type="text" class="fin" id="fN" placeholder="Ramesh Kumar">
+        </div>
+        <div>
+          <label class="flbl">Phone Number *</label>
+          <input type="tel" class="fin" id="fP" placeholder="+91 98765 43210">
+        </div>
+        <div>
+          <label class="flbl">Email Address</label>
+          <input type="email" class="fin" id="fE" placeholder="you@email.com">
+        </div>
+        <div>
+          <label class="flbl">Product Interest</label>
+          <select class="fsel" id="fPr">
+            <option>Compound Walls</option>
+            <option>Cement Tiles</option>
+            <option>RCC Pillars</option>
+            <option>Paver Blocks</option>
+            <option>Precast Slabs</option>
+            <option>Architectural Consultation</option>
+            <option>Custom Precast</option>
+          </select>
+        </div>
+        <div class="ctful">
+          <label class="flbl">Project Details</label>
+          <textarea class="ctta" id="fM" placeholder="Plot size, wall height, delivery location, timeline..."></textarea>
+        </div>
+        <button class="ctsub" onclick="doContact()">Send Message →</button>
+        <div class="ctok" id="cOk">✓ &nbsp;Message received. We'll call you within 24 hours.</div>
+      </div>
+      <div class="ctlinks rv d2">
+        <a href="tel:+917013485016" class="ctlnk">📞 Call Now</a>
+        <a href="https://wa.me/917013485016" target="_blank" class="ctlnk">💬 WhatsApp</a>
+        <a href="mailto:lokeshprecast@gmail.com" class="ctlnk">✉️ Email</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ftp">
+    <div>
+      <div class="fbrnd">Lokesh Precast Walls</div>
+      <div class="fsub">Lokesh Mudaliar · B.Arch · Architect &amp; Manufacturer</div>
+      <div class="fctct">
+        📞 <a href="tel:+917013485016">+91 70134 85016</a><br>
+        📍 <a href="https://maps.app.goo.gl/m9Zw2esxCN3CmjxKA" target="_blank">Factory Location →</a>
+      </div>
+    </div>
+    <div class="fcols">
+      <div class="fcol">
+        <h4>Products</h4>
+        <a href="#products">Compound Walls</a>
+        <a href="#products">Cement Tiles</a>
+        <a href="#products">RCC Pillars</a>
+        <a href="#products">Paver Blocks</a>
+        <a href="#products">Custom Precast</a>
+      </div>
+      <div class="fcol">
+        <h4>Company</h4>
+        <a href="#about">About Lokesh</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#location">Location</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="fcol">
+        <h4>Contact</h4>
+        <a href="tel:+917013485016">70134 85016</a>
+        <a href="https://wa.me/917013485016">WhatsApp</a>
+        <a href="#calculator">Cost Estimator</a>
+      </div>
+    </div>
+  </div>
+  <div class="fbot">
+    <div class="fcpy">© 2025 Lokesh Precast Walls · Lokesh Mudaliar B.Arch · All rights reserved.</div>
+    <div class="fcpy">Factory-direct · Quality tested · Made in India 🇮🇳</div>
+  </div>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const c1=document.getElementById('c1'),c2=document.getElementById('c2');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;c1.style.left=mx+'px';c1.style.top=my+'px';},{passive:true});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;c2.style.left=rx+'px';c2.style.top=ry+'px';requestAnimationFrame(loop)})();
+document.querySelectorAll('a,button,.gc,.pc,.aimg').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('h'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('h'));
+});
+
+/* ── NAV ── */
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('on',scrollY>55);},{passive:true});
+
+/* ── HERO SLIDESHOW ── */
+const SLIDES=[
+  'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1920&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1920&q=90&fit=crop',
+  'https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?w=1920&q=90&fit=crop'
+];
+let si=0;
+const hia=document.getElementById('hia'),hib=document.getElementById('hib');
+setInterval(()=>{
+  si=(si+1)%SLIDES.length;
+  hib.style.backgroundImage=`url('${SLIDES[si]}')`;
+  hib.style.opacity='.28';
+  setTimeout(()=>{hia.style.backgroundImage=`url('${SLIDES[si]}')`;hib.style.opacity='0';},2000);
+},7000);
+
+/* ── GIANT TEXT PARALLAX ── */
+const giant=document.getElementById('hGiant');
+window.addEventListener('scroll',()=>{
+  const sy=scrollY;
+  if(giant) giant.style.transform=`translate(-50%,calc(-50% + ${sy*.5}px))`;
+  /* parallax bg sections */
+  [['pb1',.3],['pb2',.26],['pb3',.3]].forEach(([id,s])=>{
+    const el=document.getElementById(id);
+    if(el) el.style.transform=`translateY(${sy*s}px)`;
+  });
+},{passive:true});
+
+/* ── SCROLL REVEAL ── */
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.rv,.rl,.rr').forEach(el=>obs.observe(el));
+
+/* ── COUNTERS ── */
+function runCounter(el){
+  if(el.dataset.done) return; el.dataset.done='1';
+  const t=parseInt(el.dataset.t); let v=0;
+  const step=Math.ceil(t/55);
+  const iv=setInterval(()=>{
+    v=Math.min(v+step,t);
+    el.textContent=t===100?v+'%':v>999?(v/1000).toFixed(1)+'K+':v+'+';
+    if(v>=t)clearInterval(iv);
+  },26);
+}
+const cobs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)runCounter(e.target);});},{threshold:.6});
+document.querySelectorAll('.cnt,.cnt2').forEach(el=>cobs.observe(el));
+
+/* ── GALLERY DRAG ── */
+const gsc=document.getElementById('gsc');
+let gd=false,gsx=0,gsl=0;
+gsc.addEventListener('mousedown',e=>{gd=true;gsx=e.pageX-gsc.offsetLeft;gsl=gsc.scrollLeft;});
+gsc.addEventListener('mouseleave',()=>gd=false);
+gsc.addEventListener('mouseup',()=>gd=false);
+gsc.addEventListener('mousemove',e=>{if(!gd)return;e.preventDefault();gsc.scrollLeft=gsl-(e.pageX-gsc.offsetLeft-gsx)*1.5;});
+gsc.addEventListener('touchstart',e=>{gsx=e.touches[0].pageX;gsl=gsc.scrollLeft;},{passive:true});
+gsc.addEventListener('touchmove',e=>{gsc.scrollLeft=gsl-(e.touches[0].pageX-gsx);},{passive:true});
+
+/* ── CALCULATOR ── */
+function doCalc(){
+  const L=parseFloat(document.getElementById('cL').value)||0;
+  const W=parseFloat(document.getElementById('cW').value)||0;
+  const H=parseFloat(document.getElementById('cH').value)||6;
+  const type=document.getElementById('cP').value;
+  const gates=parseInt(document.getElementById('cG').value)||0;
+  const gw=parseFloat(document.getElementById('cGW').value)||10;
+  if(!L||!W){alert('Please enter plot length and width.');return;}
+  const perim=2*(L+W);
+  const wlen=Math.max(perim-gates*gw,1);
+  let area,units,note;
+  if(type==='wall'){
+    area=Math.round(wlen*H);
+    const panels=Math.ceil(wlen/8);
+    const pillars=panels+1;
+    units=panels;
+    note=`Panels: <strong>${panels}</strong> &nbsp;·&nbsp; Pillars: <strong>${pillars}</strong> &nbsp;·&nbsp; Total wall area: <strong>${area} sq.ft</strong>. Contact us for a precise quote including foundation and installation.`;
+  } else if(type==='tile'){
+    area=Math.round(L*W);
+    units=Math.ceil(area*1.1);
+    note=`Floor area: <strong>${area} sq.ft</strong> &nbsp;·&nbsp; Tiles (12×12, +10% wastage): <strong>${units} tiles</strong>. Contact us for pattern options and bulk pricing.`;
+  } else {
+    area=Math.round(L*W);
+    units=Math.round(area*4.5);
+    note=`Paver area: <strong>${area} sq.ft</strong> &nbsp;·&nbsp; Estimated blocks (60mm): <strong>${units} blocks</strong>. Contact us for final quote including edging.`;
+  }
+  document.getElementById('rP').textContent=perim+'ft';
+  document.getElementById('rA').textContent=area+' sqft';
+  document.getElementById('rU').textContent=type==='wall'?units+' panels':type==='tile'?units+' tiles':units+' blocks';
+  document.getElementById('rNote').innerHTML=note;
+  const r=document.getElementById('cRes');r.classList.add('on');
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ── CONTACT ── */
+function doContact(){
+  const n=document.getElementById('fN').value.trim();
+  const p=document.getElementById('fP').value.trim();
+  if(!n||!p){alert('Please enter your name and phone number.');return;}
+  const ok=document.getElementById('cOk');ok.classList.add('on');
+  ['fN','fP','fE','fM'].forEach(id=>document.getElementById(id).value='');
+  setTimeout(()=>ok.classList.remove('on'),7000);
+}
+
+/* ══════════════════════════════
+   WALL BUILDER GAME
+══════════════════════════════ */
+(function(){
+const cv=document.getElementById('gameCanvas');
+if(!cv) return;
+const ctx=cv.getContext('2d');
+const W=cv.width, H=cv.height;
+const CELL=26; // px per grid cell
+const COLS=Math.floor(W/CELL);
+const ROWS=Math.floor(H/CELL);
+
+// Grid state: null | 'wall' | 'pillar' | 'gate'
+const grid=Array.from({length:ROWS},()=>Array(COLS).fill(null));
+
+// Plot boundary (inner rect in grid coords)
+const PLOT={x:3, y:3, w:COLS-6, h:ROWS-6};
+
+let activeTool='wall';
+let isDrawing=false;
+let lastCell={r:-1,c:-1};
+
+/* ── COLORS ── */
+const C={
+  bg:'#0a0f0a',
+  gridLine:'rgba(74,124,89,0.08)',
+  plotGround:'rgba(255,255,255,0.02)',
+  plotBorder:'rgba(74,124,89,0.18)',
+  plotLabel:'rgba(74,124,89,0.35)',
+  wall:'#3a6644',
+  wallTop:'#52a065',
+  wallShade:'#243d2c',
+  pillar:'#5a7a3a',
+  pillarTop:'#80aa55',
+  pillarShade:'#2d3d1c',
+  gate:'#c8960a',
+  gateTop:'#f0b810',
+  gateShade:'#7a5a04',
+  erase:'rgba(200,60,60,0.3)',
+  hoverWall:'rgba(74,124,89,0.25)',
+  hoverPillar:'rgba(120,160,60,0.25)',
+  hoverGate:'rgba(220,160,20,0.25)',
+  hoverErase:'rgba(220,60,60,0.25)',
+  ground:'#0f1a0f',
+  sky:'#060d06',
+};
+
+let hoverCell={r:-1,c:-1};
+
+/* ── DRAW ── */
+function draw(){
+  ctx.clearRect(0,0,W,H);
+
+  // Background
+  ctx.fillStyle=C.bg;
+  ctx.fillRect(0,0,W,H);
+
+  // Grid lines
+  ctx.strokeStyle=C.gridLine;
+  ctx.lineWidth=1;
+  for(let r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(0,r*CELL);ctx.lineTo(W,r*CELL);ctx.stroke();}
+  for(let c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(c*CELL,0);ctx.lineTo(c*CELL,H);ctx.stroke();}
+
+  // Plot ground fill
+  ctx.fillStyle=C.ground;
+  ctx.fillRect(PLOT.x*CELL, PLOT.y*CELL, PLOT.w*CELL, PLOT.h*CELL);
+
+  // Plot outer border (dashed)
+  ctx.strokeStyle=C.plotBorder;
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([6,4]);
+  ctx.strokeRect(PLOT.x*CELL, PLOT.y*CELL, PLOT.w*CELL, PLOT.h*CELL);
+  ctx.setLineDash([]);
+
+  // Plot label
+  ctx.font=`bold 11px 'Space Mono', monospace`;
+  ctx.fillStyle=C.plotLabel;
+  ctx.textAlign='center';
+  ctx.fillText('YOUR PLOT',W/2, PLOT.y*CELL+28);
+  ctx.font=`9px 'Space Mono', monospace`;
+  ctx.fillStyle='rgba(74,124,89,0.2)';
+  ctx.fillText('click boundary to place walls', W/2, PLOT.y*CELL+46);
+
+  // Draw all cells
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const v=grid[r][c];
+      if(v) drawCell(r,c,v,1);
+    }
+  }
+
+  // Hover highlight
+  const {r,c}=hoverCell;
+  if(r>=0&&c>=0&&r<ROWS&&c<COLS){
+    const hColor={wall:C.hoverWall,pillar:C.hoverPillar,gate:C.hoverGate,erase:C.hoverErase}[activeTool]||C.hoverWall;
+    ctx.fillStyle=hColor;
+    ctx.fillRect(c*CELL+1,r*CELL+1,CELL-2,CELL-2);
+    if(activeTool!=='erase'){
+      drawCell(r,c,activeTool,0.5);
+    }
+  }
+
+  updateStats();
+}
+
+function drawCell(r,c,type,alpha){
+  const x=c*CELL, y=r*CELL;
+  ctx.globalAlpha=alpha;
+
+  if(type==='wall'){
+    // 3D wall block
+    // Main face
+    ctx.fillStyle=C.wall;
+    ctx.fillRect(x+1,y+4,CELL-2,CELL-6);
+    // Top face (lighter)
+    ctx.fillStyle=C.wallTop;
+    ctx.fillRect(x+1,y+1,CELL-2,5);
+    // Mortar lines
+    ctx.fillStyle=C.wallShade;
+    ctx.fillRect(x+1,y+4,CELL-2,1);
+    ctx.fillRect(x+CELL/2,y+5,1,CELL-8);
+    // Brick texture
+    ctx.fillStyle='rgba(0,0,0,0.15)';
+    ctx.fillRect(x+2,y+8,CELL/2-2,4);
+    ctx.fillRect(x+CELL/2+2,y+14,CELL/2-3,4);
+  } else if(type==='pillar'){
+    // RCC pillar — square with depth
+    const px=x+2, py=y+2, pw=CELL-4, ph=CELL-4;
+    // Shadow
+    ctx.fillStyle='rgba(0,0,0,0.4)';
+    ctx.fillRect(px+3,py+3,pw,ph);
+    // Front
+    ctx.fillStyle=C.pillar;
+    ctx.fillRect(px,py,pw,ph);
+    // Top highlight
+    ctx.fillStyle=C.pillarTop;
+    ctx.fillRect(px,py,pw,4);
+    ctx.fillRect(px,py,4,ph);
+    // Inner shadow
+    ctx.fillStyle=C.pillarShade;
+    ctx.fillRect(px+pw-3,py+3,3,ph-3);
+    ctx.fillRect(px+3,py+ph-3,pw-3,3);
+    // Centre dot
+    ctx.fillStyle='rgba(255,255,255,0.12)';
+    ctx.fillRect(px+pw/2-2,py+ph/2-2,5,5);
+  } else if(type==='gate'){
+    // Gate — golden arch hint
+    ctx.fillStyle=C.gateShade;
+    ctx.fillRect(x+1,y+1,CELL-2,CELL-2);
+    ctx.fillStyle=C.gate;
+    // Posts
+    ctx.fillRect(x+2,y+2,4,CELL-4);
+    ctx.fillRect(x+CELL-6,y+2,4,CELL-4);
+    // Top bar
+    ctx.fillStyle=C.gateTop;
+    ctx.fillRect(x+2,y+2,CELL-4,4);
+    // Opening
+    ctx.fillStyle='rgba(0,0,0,0.5)';
+    ctx.fillRect(x+6,y+6,CELL-12,CELL-8);
+  }
+
+  ctx.globalAlpha=1;
+}
+
+function updateStats(){
+  let walls=0,pillars=0,gates=0,total=0;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    const v=grid[r][c];
+    if(v==='wall') walls++;
+    else if(v==='pillar') pillars++;
+    else if(v==='gate') gates++;
+  }
+  total=walls+pillars+gates;
+
+  // Boundary perimeter cells count
+  const boundCells=2*(PLOT.w+PLOT.h);
+  const pct=Math.round(total/boundCells*100);
+
+  document.getElementById('st-panels').textContent=walls;
+  document.getElementById('st-pillars').textContent=pillars;
+  document.getElementById('st-gates').textContent=gates;
+  document.getElementById('st-pct').textContent=Math.min(pct,100)+'%';
+}
+
+/* ── TOOL ── */
+window.setTool=function(t){
+  activeTool=t;
+  ['wall','pillar','gate','erase'].forEach(id=>{
+    document.getElementById('tb-'+id).classList.toggle('active',id===t);
+  });
+  draw();
+};
+
+/* ── PLACE / ERASE ── */
+function cellFromEvent(e){
+  const rect=cv.getBoundingClientRect();
+  const scaleX=cv.width/rect.width;
+  const scaleY=cv.height/rect.height;
+  const px=(e.clientX-rect.left)*scaleX;
+  const py=(e.clientY-rect.top)*scaleY;
+  return {r:Math.floor(py/CELL), c:Math.floor(px/CELL)};
+}
+
+function place(r,c){
+  if(r<0||r>=ROWS||c<0||c>=COLS) return;
+  if(activeTool==='erase'){
+    grid[r][c]=null;
+  } else {
+    grid[r][c]=activeTool;
+  }
+  draw();
+}
+
+cv.addEventListener('mousedown',e=>{
+  e.preventDefault();
+  isDrawing=true;
+  const {r,c}=cellFromEvent(e);
+  lastCell={r,c};
+  place(r,c);
+});
+cv.addEventListener('mousemove',e=>{
+  const {r,c}=cellFromEvent(e);
+  hoverCell={r,c};
+  if(isDrawing&&(r!==lastCell.r||c!==lastCell.c)){
+    lastCell={r,c};
+    place(r,c);
+  } else draw();
+});
+cv.addEventListener('mouseup',()=>isDrawing=false);
+cv.addEventListener('mouseleave',()=>{isDrawing=false;hoverCell={r:-1,c:-1};draw();});
+cv.addEventListener('contextmenu',e=>{
+  e.preventDefault();
+  const {r,c}=cellFromEvent(e);
+  grid[r][c]=null;
+  draw();
+});
+
+/* ── AUTO FILL ── */
+window.autoFill=function(){
+  // Clear grid first
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) grid[r][c]=null;
+
+  // Place pillars at corners
+  const corners=[
+    [PLOT.y,PLOT.x],[PLOT.y,PLOT.x+PLOT.w-1],
+    [PLOT.y+PLOT.h-1,PLOT.x],[PLOT.y+PLOT.h-1,PLOT.x+PLOT.w-1]
+  ];
+  corners.forEach(([r,c])=>grid[r][c]='pillar');
+
+  // Top & bottom walls with pillars every 3
+  for(let c=PLOT.x;c<PLOT.x+PLOT.w;c++){
+    if(grid[PLOT.y][c]!=='pillar') grid[PLOT.y][c]=(c-PLOT.x)%4===0?'pillar':'wall';
+    if(grid[PLOT.y+PLOT.h-1][c]!=='pillar') grid[PLOT.y+PLOT.h-1][c]=(c-PLOT.x)%4===0?'pillar':'wall';
+  }
+
+  // Left & right walls — add gate in middle of right side
+  const midR=Math.floor(PLOT.y+PLOT.h/2);
+  for(let r=PLOT.y;r<PLOT.y+PLOT.h;r++){
+    if(grid[r][PLOT.x]!=='pillar') grid[r][PLOT.x]=r%4===0?'pillar':'wall';
+    if(r===midR||r===midR+1){
+      grid[r][PLOT.x+PLOT.w-1]='gate';
+    } else {
+      if(grid[r][PLOT.x+PLOT.w-1]!=='pillar') grid[r][PLOT.x+PLOT.w-1]=r%4===0?'pillar':'wall';
+    }
+  }
+
+  showPop('Auto-filled!');
+  draw();
+};
+
+/* ── CLEAR ── */
+window.clearAll=function(){
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) grid[r][c]=null;
+  draw();
+};
+
+/* ── QUOTE ── */
+window.requestQuote=function(){
+  updateStats();
+  const panels=document.getElementById('st-panels').textContent;
+  const pillars=document.getElementById('st-pillars').textContent;
+  const gates=document.getElementById('st-gates').textContent;
+  document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>{
+    const fM=document.getElementById('fM');
+    if(fM) fM.value=`From Wall Builder Game:
+Wall Panels: ${panels}
+RCC Pillars: ${pillars}
+Gates: ${gates}
+Please provide quote for this compound wall layout.`;
+    const fPr=document.getElementById('fPr');
+    if(fPr) fPr.value='Compound Walls';
+  },800);
+};
+
+/* ── SCORE POP ── */
+function showPop(msg){
+  const el=document.createElement('div');
+  el.className='score-pop';
+  el.textContent=msg;
+  el.style.cssText='position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:20;font-family:var(--disp);font-size:1.2rem;color:#6aab79;letter-spacing:.06em;pointer-events:none;';
+  const wrap=cv.parentElement;
+  wrap.style.position='relative';
+  wrap.appendChild(el);
+  let op=1;
+  const fade=setInterval(()=>{op-=0.04;el.style.opacity=op;el.style.top=(20-((1-op)*40))+'px';if(op<=0){clearInterval(fade);el.remove();}},40);
+}
+
+draw();
+})();
+
+</script>
+</body>
+</html>
