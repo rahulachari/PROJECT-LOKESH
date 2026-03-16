@@ -131,5 +131,4 @@ Since it's a single file, no build configuration is needed.
 
 MIT — free to fork, adapt, and use as a template for other business websites.
 =======
-<h1> process..... </h1>
->>>>>>> 63d54d8b074cd5368676381c230e088aa3f926d9
+
