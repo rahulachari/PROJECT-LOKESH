@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🏗️ WallCraft — Lokesh Precast Walls
 
 > A premium, single-file business website for **Lokesh Precast Walls** — a precast compound wall manufacturer and architectural concrete supplier based in India.
@@ -129,3 +130,6 @@ Since it's a single file, no build configuration is needed.
 ## 📄 License
 
 MIT — free to fork, adapt, and use as a template for other business websites.
+=======
+<h1> process..... </h1>
+>>>>>>> 63d54d8b074cd5368676381c230e088aa3f926d9
